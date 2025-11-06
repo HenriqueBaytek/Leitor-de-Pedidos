@@ -1,7 +1,10 @@
+// Arquivo: App.tsx (Versão Final)
+
 import React, { useState, useCallback } from 'react';
+import { extractOrderDetails } from './geminiService';
 import type { PurchaseOrder } from './types';
-// import OrderSummary from './components/OrderSummary';
-// import { UploadIcon, PdfIcon, SheetIcon, FileIcon, TrashIcon } from './components/icons'; // LINHA COMENTADA
+import OrderSummary from './OrderSummary';
+import { UploadIcon, PdfIcon, SheetIcon, FileIcon, TrashIcon } from './icons';
 
 declare var XLSX: any;
 
@@ -109,7 +112,25 @@ const App: React.FC = () => {
     setOrderData(null);
 
     try {
-      setError("A função de extração ainda não foi implementada.");
+      const results = await Promise.all(
+        processedFiles.map(async (processedFile) => {
+          const { originalFile, content, isPreviewableImage } = processedFile;
+          let dataForApi: string;
+          let mimeTypeForApi: string;
+
+          if (isPreviewableImage || originalFile.type === 'application/pdf') {
+            dataForApi = content.split(',')[1];
+            mimeTypeForApi = originalFile.type;
+          } else {
+            dataForApi = content;
+            mimeTypeForApi = 'text/csv';
+          }
+
+          const resultData = await extractOrderDetails(dataForApi, mimeTypeForApi);
+          return { fileName: originalFile.name, data: resultData };
+        })
+      );
+      setOrderData(results);
     } catch (err) {
       console.error(err);
       setError('Falha ao processar um ou mais pedidos. Por favor, verifique os arquivos e tente novamente.');
@@ -122,17 +143,16 @@ const App: React.FC = () => {
     if (file.type.startsWith('image/')) {
         return <img src={URL.createObjectURL(file)} alt={file.name} className="w-10 h-10 object-cover rounded-md" onLoad={e => URL.revokeObjectURL((e.target as HTMLImageElement).src)} />;
     }
-    // As próximas linhas usam os ícones, então vamos retornar um texto simples por enquanto
     if (file.type === 'application/pdf') {
-        return <span className="text-xs">PDF</span>;
+        return <PdfIcon className="w-10 h-10 text-red-400" />;
     }
     if (
         file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
         file.type === 'application/vnd.oasis.opendocument.spreadsheet'
     ) {
-        return <span className="text-xs">XLSX</span>;
+        return <SheetIcon className="w-10 h-10 text-green-400" />;
     }
-    return <span className="text-xs">FILE</span>;
+    return <FileIcon className="w-10 h-10 text-gray-500" />;
   };
 
   return (
@@ -169,8 +189,7 @@ const App: React.FC = () => {
                             className="p-1 text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-600 transition-colors"
                             aria-label={`Remover ${file.originalFile.name}`}
                           >
-                            {/* <TrashIcon className="w-5 h-5" /> */}
-                            <span>X</span>
+                            <TrashIcon className="w-5 h-5" />
                           </button>
                         </div>
                       ))}
@@ -178,8 +197,7 @@ const App: React.FC = () => {
                   </div>
                 ) : (
                   <div className="text-center">
-                    {/* <UploadIcon className="mx-auto h-12 w-12 text-gray-500" /> */}
-                    <span className="text-2xl">⬆️</span>
+                    <UploadIcon className="mx-auto h-12 w-12 text-gray-500" />
                     <span className="mt-2 block text-sm font-medium text-gray-300">
                       Clique para carregar documentos
                     </span>
@@ -229,8 +247,7 @@ const App: React.FC = () => {
                                 Resultado para: <span className="font-mono text-base">{order.fileName}</span>
                             </h2>
                             <div className="p-4">
-                                {/* <OrderSummary data={order.data} /> */}
-                                <p>O componente OrderSummary está desativado.</p>
+                                <OrderSummary data={order.data} />
                             </div>
                         </div>
                     ))}
