@@ -4,7 +4,6 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { HarmCategory, HarmBlockThreshold } from "@google/genai";
 import type { PurchaseOrder } from './types';
 
-// ATENÇÃO: A sua chave de API é injetada aqui pelo Vite durante o processo de build.
 const API_KEY = process.env.API_KEY;
 
 if (!API_KEY) {
@@ -13,7 +12,6 @@ if (!API_KEY) {
 
 const genAI = new GoogleGenerativeAI(API_KEY);
 
-// Função para converter dados de arquivo (base64 ou texto) para o formato da API do Gemini
 function fileToGenerativePart(data: string, mimeType: string) {
   return {
     inlineData: {
@@ -71,7 +69,6 @@ Se alguma informação não for encontrada, retorne null para o campo correspond
     });
 
     const responseText = result.response.text();
-    // Limpa a resposta para garantir que é um JSON válido
     const cleanedJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
     const parsedData: PurchaseOrder = JSON.parse(cleanedJson);
     return parsedData;
