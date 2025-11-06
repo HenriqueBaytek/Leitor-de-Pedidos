@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { extractOrderDetails } from './services/geminiService';
+import { extractOrderDetails } from './geminiService';
 import type { PurchaseOrder } from './types';
 import OrderSummary from './components/OrderSummary';
 import { UploadIcon, PdfIcon, SheetIcon, FileIcon, TrashIcon } from './components/icons';
