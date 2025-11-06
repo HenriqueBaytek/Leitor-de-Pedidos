@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import type { PurchaseOrder } from './types';
-// import OrderSummary from './components/OrderSummary'; // LINHA COMENTADA
-import { UploadIcon, PdfIcon, SheetIcon, FileIcon, TrashIcon } from './components/icons';
+// import OrderSummary from './components/OrderSummary';
+// import { UploadIcon, PdfIcon, SheetIcon, FileIcon, TrashIcon } from './components/icons'; // LINHA COMENTADA
 
 declare var XLSX: any;
 
@@ -122,16 +122,17 @@ const App: React.FC = () => {
     if (file.type.startsWith('image/')) {
         return <img src={URL.createObjectURL(file)} alt={file.name} className="w-10 h-10 object-cover rounded-md" onLoad={e => URL.revokeObjectURL((e.target as HTMLImageElement).src)} />;
     }
+    // As próximas linhas usam os ícones, então vamos retornar um texto simples por enquanto
     if (file.type === 'application/pdf') {
-        return <PdfIcon className="w-10 h-10 text-red-400" />;
+        return <span className="text-xs">PDF</span>;
     }
     if (
         file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
         file.type === 'application/vnd.oasis.opendocument.spreadsheet'
     ) {
-        return <SheetIcon className="w-10 h-10 text-green-400" />;
+        return <span className="text-xs">XLSX</span>;
     }
-    return <FileIcon className="w-10 h-10 text-gray-500" />;
+    return <span className="text-xs">FILE</span>;
   };
 
   return (
@@ -168,7 +169,8 @@ const App: React.FC = () => {
                             className="p-1 text-gray-400 hover:text-red-500 rounded-full hover:bg-gray-600 transition-colors"
                             aria-label={`Remover ${file.originalFile.name}`}
                           >
-                            <TrashIcon className="w-5 h-5" />
+                            {/* <TrashIcon className="w-5 h-5" /> */}
+                            <span>X</span>
                           </button>
                         </div>
                       ))}
@@ -176,7 +178,8 @@ const App: React.FC = () => {
                   </div>
                 ) : (
                   <div className="text-center">
-                    <UploadIcon className="mx-auto h-12 w-12 text-gray-500" />
+                    {/* <UploadIcon className="mx-auto h-12 w-12 text-gray-500" /> */}
+                    <span className="text-2xl">⬆️</span>
                     <span className="mt-2 block text-sm font-medium text-gray-300">
                       Clique para carregar documentos
                     </span>
@@ -226,8 +229,8 @@ const App: React.FC = () => {
                                 Resultado para: <span className="font-mono text-base">{order.fileName}</span>
                             </h2>
                             <div className="p-4">
-                                {/* <OrderSummary data={order.data} /> */} {/* LINHA COMENTADA */}
-                                <p>O componente OrderSummary está desativado.</p> {/* LINHA ADICIONADA */}
+                                {/* <OrderSummary data={order.data} /> */}
+                                <p>O componente OrderSummary está desativado.</p>
                             </div>
                         </div>
                     ))}
