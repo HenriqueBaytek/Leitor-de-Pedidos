@@ -33,6 +33,10 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
+      # ETAPA ADICIONADA: Limpa o cache para evitar erros de integridade
+      - name: Clean npm cache
+        run: npm cache clean --force
+
       - name: Install dependencies
         run: npm install
 
