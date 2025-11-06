@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import type { PurchaseOrder } from './types';
-import OrderSummary from './components/OrderSummary';
+// import OrderSummary from './components/OrderSummary'; // LINHA COMENTADA
 import { UploadIcon, PdfIcon, SheetIcon, FileIcon, TrashIcon } from './components/icons';
 
 declare var XLSX: any;
@@ -226,7 +226,8 @@ const App: React.FC = () => {
                                 Resultado para: <span className="font-mono text-base">{order.fileName}</span>
                             </h2>
                             <div className="p-4">
-                                <OrderSummary data={order.data} />
+                                {/* <OrderSummary data={order.data} /> */} {/* LINHA COMENTADA */}
+                                <p>O componente OrderSummary está desativado.</p> {/* LINHA ADICIONADA */}
                             </div>
                         </div>
                     ))}
