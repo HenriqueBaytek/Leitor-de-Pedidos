@@ -32,13 +32,10 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-
-      # ETAPA ADICIONADA: Limpa o cache para evitar erros de integridade
-      - name: Clean npm cache
-        run: npm cache clean --force
-
+      
+      # Usa 'npm ci' para uma instalação limpa e rápida baseada no package-lock.json
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build application
         # Este é o passo crucial onde a chave da API do GitHub Secrets é passada para o processo de build
