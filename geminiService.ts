@@ -1,6 +1,7 @@
-// Arquivo: geminiService.ts
+// Arquivo: geminiService.ts (Corrigido)
 
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { HarmCategory, HarmBlockThreshold } from "@google/genai";
 import type { PurchaseOrder } from './types';
 
 // ATENÇÃO: A sua chave de API é injetada aqui pelo Vite durante o processo de build.
