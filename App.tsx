@@ -1,15 +1,13 @@
 import React, { useState, useCallback } from 'react';
-import { extractOrderDetails } from './geminiService';
 import type { PurchaseOrder } from './types';
 import OrderSummary from './components/OrderSummary';
 import { UploadIcon, PdfIcon, SheetIcon, FileIcon, TrashIcon } from './components/icons';
 
-// Add type declaration for the globally available XLSX library from SheetJS
 declare var XLSX: any;
 
 interface ProcessedFile {
   originalFile: File;
-  content: string; // base64 data URL for images/pdf, csv text for spreadsheets
+  content: string;
   isPreviewableImage: boolean;
 }
 
@@ -25,18 +23,17 @@ const App: React.FC = () => {
 
     setError(null);
     setOrderData(null);
-    setProcessedFiles([]); // Clear previous state for new selection
+    setProcessedFiles([]);
 
     const ALLOWED_MIME_TYPES = [
       'image/jpeg',
       'image/png',
       'image/webp',
       'application/pdf',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-      'application/vnd.oasis.opendocument.spreadsheet', // .ods
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'application/vnd.oasis.opendocument.spreadsheet',
     ];
 
-    // Fix: Explicitly type 'file' as 'File' to resolve type inference errors.
     const filePromises = Array.from(files).map((file: File) => {
       return new Promise<ProcessedFile | null>((resolve) => {
         if (!ALLOWED_MIME_TYPES.includes(file.type)) {
@@ -101,7 +98,6 @@ const App: React.FC = () => {
     setProcessedFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
-
   const handleSubmit = useCallback(async () => {
     if (processedFiles.length === 0) {
       setError('Por favor, selecione um ou mais arquivos primeiro.');
@@ -113,25 +109,7 @@ const App: React.FC = () => {
     setOrderData(null);
 
     try {
-      const results = await Promise.all(
-        processedFiles.map(async (processedFile) => {
-          const { originalFile, content, isPreviewableImage } = processedFile;
-          let dataForApi: string;
-          let mimeTypeForApi: string;
-
-          if (isPreviewableImage || originalFile.type === 'application/pdf') {
-            dataForApi = content.split(',')[1];
-            mimeTypeForApi = originalFile.type;
-          } else {
-            dataForApi = content;
-            mimeTypeForApi = 'text/csv';
-          }
-
-          const resultData = await extractOrderDetails(dataForApi, mimeTypeForApi);
-          return { fileName: originalFile.name, data: resultData };
-        })
-      );
-      setOrderData(results);
+      setError("A função de extração ainda não foi implementada.");
     } catch (err) {
       console.error(err);
       setError('Falha ao processar um ou mais pedidos. Por favor, verifique os arquivos e tente novamente.');
@@ -155,7 +133,6 @@ const App: React.FC = () => {
     }
     return <FileIcon className="w-10 h-10 text-gray-500" />;
   };
-
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100 flex flex-col items-center p-4 sm:p-6 md:p-8">
