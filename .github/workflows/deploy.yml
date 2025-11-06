@@ -1,21 +1,16 @@
 name: Deploy to GitHub Pages
 
 on:
-  # Roda quando há um push para a branch principal
   push:
     branches:
       - main
-
-  # Permite que você rode este workflow manualmente pela aba "Actions" do GitHub
   workflow_dispatch:
 
-# Define as permissões necessárias para o token do GitHub para o deploy
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Permite apenas um deploy concorrente
 concurrency:
   group: "pages"
   cancel-in-progress: false
@@ -31,14 +26,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
       
-      # Usa 'npm ci' para uma instalação limpa e rápida baseada no package-lock.json
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build application
-        # Este é o passo crucial onde a chave da API do GitHub Secrets é passada para o processo de build
         run: npm run build
         env:
           VITE_GEMINI_API_KEY: ${{ secrets.VITE_GEMINI_API_KEY }}
@@ -49,7 +41,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Faz o upload da pasta 'dist' que contém o site construído
           path: './dist'
 
       - name: Deploy to GitHub Pages
